@@ -23,12 +23,11 @@ jobs:
         run: |
           git config --global user.email "bot@github.com"
           git config --global user.name "kmi-bot"
-          git clone --depth=1 "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" repo
+          git clone --no-single-branch --depth=1 "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" repo
           cd repo
-          git fetch origin kmi-report --depth=1 2>/dev/null || true
-          git checkout kmi-report 2>/dev/null || git checkout -b kmi-report FETCH_HEAD 2>/dev/null || git checkout --orphan kmi-report
-          cp base/Module.symvers symvers_base.txt
-          cp cgroupfix/Module.symvers symvers_cgroupfix.txt
+          git checkout kmi-report || git checkout -b kmi-report
+          cp ../base/Module.symvers symvers_base.txt
+          cp ../cgroupfix/Module.symvers symvers_cgroupfix.txt
           git add -f symvers_base.txt symvers_cgroupfix.txt
           git commit -m "export full Module.symvers files" || git commit --amend -m "export full Module.symvers files"
           git push -f origin kmi-report
