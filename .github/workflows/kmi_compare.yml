@@ -1,0 +1,56 @@
+name: KMI compare (base vs cgroupfix)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 下载两份 Module.symvers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run download 37446346981 -R ${{ github.repository }} -n Module-symvers-base-k90u -D base
+          gh run download 37446416002 -R ${{ github.repository }} -n Module-symvers-cgroupfix-k90u -D cgroupfix
+          ls -l base cgroupfix
+
+      - name: 对比导出符号 CRC
+        run: |
+          sort base/Module.symvers > /tmp/a.symvers
+          sort cgroupfix/Module.symvers > /tmp/b.symvers
+          diff /tmp/a.symvers /tmp/b.symvers > /tmp/kmi.diff || true
+          {
+            echo "KMI 对比报告 (base vs cgroupfix)"
+            echo "基线符号数: $(wc -l < /tmp/a.symvers)"
+            echo "cgroupfix符号数: $(wc -l < /tmp/b.symvers)"
+            echo "差异行数: $(wc -l < /tmp/kmi.diff)"
+            echo "结论: $([ ! -s /tmp/kmi.diff ] && echo 'PASS - 零差异,补丁未破坏KMI,可刷入' || echo 'FAIL - 存在CRC差异,禁止刷入,需人工排查')"
+            echo ""
+            echo "--- 差异内容(前200行) ---"
+            head -200 /tmp/kmi.diff
+            echo ""
+            echo "--- 样本(基线前20行) ---"
+            head -20 /tmp/a.symvers
+          } > result.txt
+          cat result.txt
+
+      - name: 推送报告到 kmi-report 分支
+        run: |
+          git config --global user.email "bot@github.com"
+          git config --global user.name "kmi-bot"
+          git clone --depth=1 "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" repo
+          cd repo
+          git checkout --orphan kmi-report
+          git rm -rf . >/dev/null 2>&1 || true
+          cp /tmp/kmi.diff kmi_full_diff.txt 2>/dev/null || echo "(无差异)" > kmi_full_diff.txt
+          cp /dev/null kmi_report.txt
+          cat ../result.txt > kmi_report.txt 2>/dev/null || true
+          ls -l
+          git add -f kmi_report.txt kmi_full_diff.txt
+          git commit -m "KMI compare report"
+          git push -f origin kmi-report
