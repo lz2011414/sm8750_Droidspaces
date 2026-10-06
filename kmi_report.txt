@@ -1,0 +1,35 @@
+KMI 对比报告 (base vs cgroupfix)
+基线符号数: 16963
+cgroupfix符号数: 16966
+差异行数: 6
+结论: FAIL - 存在CRC差异,禁止刷入,需人工排查
+
+--- 差异内容(前200行) ---
+45a46
+> 0x00dbe10d	css_set_pids	vmlinux	EXPORT_SYMBOL_GPL	
+7446a7448
+> 0x70c2c7ea	pids_cgrp_subsys_on_dfl_key	vmlinux	EXPORT_SYMBOL_GPL	
+15183a15186
+> 0xe60a5e8d	pids_cgrp_subsys_enabled_key	vmlinux	EXPORT_SYMBOL_GPL	
+
+--- 样本(基线前20行) ---
+0x00002221	netlink_add_tap	vmlinux	EXPORT_SYMBOL_GPL	
+0x00042d0d	dev_forward_skb	vmlinux	EXPORT_SYMBOL_GPL	
+0x000d7d51	clocksource_change_rating	vmlinux	EXPORT_SYMBOL	
+0x00114764	unregister_reboot_notifier	vmlinux	EXPORT_SYMBOL	
+0x00120f50	__tracepoint_android_vh_sync_irq_wait_finish	vmlinux	EXPORT_SYMBOL_GPL	
+0x00148653	vsnprintf	vmlinux	EXPORT_SYMBOL	
+0x0019d059	iomap_fiemap	vmlinux	EXPORT_SYMBOL_GPL	
+0x00256c80	sdio_retune_hold_now	vmlinux	EXPORT_SYMBOL_GPL	
+0x002577fa	copy_string_kernel	vmlinux	EXPORT_SYMBOL	
+0x002ead4b	__SCK__tp_func_android_vh_exit_check	vmlinux	EXPORT_SYMBOL_GPL	
+0x0043c79e	led_set_brightness	vmlinux	EXPORT_SYMBOL_GPL	
+0x0049ca83	xfrm_aead_get_byname	vmlinux	EXPORT_SYMBOL_GPL	
+0x0050a2d6	drm_clflush_pages	vmlinux	EXPORT_SYMBOL	
+0x0051d3c5	__SCK__tp_func_sched_stat_wait	vmlinux	EXPORT_SYMBOL_GPL	
+0x0052f364	snd_soc_set_runtime_hwparams	vmlinux	EXPORT_SYMBOL_GPL	
+0x005703f9	__cgroup_bpf_run_filter_sock_ops	vmlinux	EXPORT_SYMBOL	
+0x0058cab6	iomap_file_unshare	vmlinux	EXPORT_SYMBOL_GPL	
+0x00596b71	grab_cache_page_write_begin	vmlinux	EXPORT_SYMBOL	
+0x005f18a6	add_wait_queue_priority	vmlinux	EXPORT_SYMBOL_GPL	
+0x006574b5	virtio_transport_notify_recv_init	vmlinux	EXPORT_SYMBOL_GPL	
